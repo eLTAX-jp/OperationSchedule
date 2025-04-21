@@ -5,6 +5,7 @@
 # eLTAX運転日スケジュール雛形作成
 #----------------------------------------------------------------
 require 'date'
+require 'holiday_japan' # gem install holiday_japan
 
 def genschedule(year)
 	begin_day = Date.new(year, 4, 1)
@@ -13,9 +14,9 @@ def genschedule(year)
 	puts("{")
 	(begin_day ... end_day).each do |a_day|
 		a_day_s = a_day.to_s
-		if a_day.month == 1 && a_day.day == 1
-			print("\t\"#{a_day_s}\": { \"op\":\"×\", \"holiday\":\"元日\" }")
-		elsif a_day.month == 1 && [2,3].include?(a_day.day)
+		if (hname = HolidayJapan.name(a_day))
+			print("\t\"#{a_day_s}\": { \"op\":\"×\", \"holiday\":\"#{hname}\" }")
+		elsif a_day.month == 1 && [1,2,3].include?(a_day.day)
 			print("\t\"#{a_day_s}\": { \"op\":\"×\", \"holiday\":\"年始休\" }")
 		elsif a_day.month == 12 && [29,30,31].include?(a_day.day)
 			print("\t\"#{a_day_s}\": { \"op\":\"×\", \"holiday\":\"年末休\" }")
